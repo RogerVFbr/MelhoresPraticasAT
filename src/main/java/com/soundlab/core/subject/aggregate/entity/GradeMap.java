@@ -11,7 +11,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import lombok.Getter;
+import lombok.ToString;
 
+@ToString
 public class GradeMap {
     @Getter
     private final Map<Student, List<Double>> gradeMap = new HashMap<>();
@@ -50,5 +52,4 @@ public class GradeMap {
             .collect(Collectors.averagingDouble(Double::doubleValue))
             .toString();
     }
-
 }

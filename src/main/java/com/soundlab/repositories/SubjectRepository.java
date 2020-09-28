@@ -1,11 +1,15 @@
 package com.soundlab.repositories;
 
+import com.soundlab.abstracts.specification.Specification;
+import com.soundlab.core.subject.aggregate.enums.StudyShift;
 import com.soundlab.core.subject.aggregate.repository.ISubjectRepository;
 import com.soundlab.core.subject.aggregate.entity.Subject;
+import com.soundlab.core.subject.aggregate.specification.StudyShiftSpecification;
 import com.soundlab.exceptions.DatabaseEntryAlreadyExistentException;
 import com.soundlab.exceptions.DatabaseEntryInexistentException;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class SubjectRepository extends AbstractRepository<Subject> implements ISubjectRepository {
 
@@ -20,6 +24,13 @@ public class SubjectRepository extends AbstractRepository<Subject> implements IS
             .filter(subject -> subject.getId().equals(id))
             .findFirst()
             .orElse(null);
+    }
+
+    public List<Subject> getByShift(StudyShift shift) {
+        Specification<StudyShift> spec = new StudyShiftSpecification(shift);
+        return repository.stream()
+            .filter(subject -> spec.isSatisfiedBy(subject.getStudyShift()))
+            .collect(Collectors.toList());
     }
 
     @Override

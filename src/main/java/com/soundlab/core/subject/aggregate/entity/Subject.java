@@ -1,8 +1,10 @@
 package com.soundlab.core.subject.aggregate.entity;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.soundlab.core.student.aggregate.entity.Student;
 import com.soundlab.core.subject.aggregate.enums.StudyShift;
 import com.soundlab.core.teacher.aggregate.entity.Teacher;
+import com.soundlab.exceptions.InvalidSubjectInstantiationException;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -11,7 +13,7 @@ import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
 
-public class Subject {
+public abstract class Subject {
     @Getter @Setter private Long id;
     @Getter @Setter private String name;
     @Getter @Setter private String description;
@@ -21,7 +23,7 @@ public class Subject {
     @Getter private final PresenceMap presenceMap = new PresenceMap();
     @Getter private final GradeMap gradeMap = new GradeMap();
 
-    private Subject() {};
+    protected Subject() {};
 
     private Subject(Long id, String name, String description, Teacher teacher,
                     StudyShift studyShift) {
@@ -32,17 +34,42 @@ public class Subject {
         this.studyShift = studyShift;
     }
 
-    public static Subject create(Long id, String name, String description, Teacher teacher,
+    public static <T extends Subject> T create(Class<T> type, Long id, String name, String description, Teacher teacher,
                           StudyShift studyShift) {
-        return new Subject(id, name, description, teacher, studyShift);
+        try {
+            T result = type.newInstance();
+            result.setId(id);
+            result.setName(name);
+            result.setDescription(description);
+            result.setStudyShift(studyShift);
+            result.setTeacher(teacher);
+            return result;
+        } catch (InstantiationException | IllegalAccessException e) {
+            e.printStackTrace();
+            throw new InvalidSubjectInstantiationException();
+        }
     }
 
-    public static Subject create(Long id, String name, String description, Teacher teacher,
+    public static <T extends Subject> T create(Class<T> type, Long id, String name, String description, Teacher teacher,
                           StudyShift studyShift, Set<Student> students) {
-        Subject subject = new Subject(id, name, description, teacher, studyShift);
-        students.forEach(subject::addStudent);
-        return subject;
+        try {
+            T result = type.newInstance();
+            result.setId(id);
+            result.setName(name);
+            result.setDescription(description);
+            result.setStudyShift(studyShift);
+            result.setTeacher(teacher);
+            students.forEach(result::addStudent);
+            return result;
+        } catch (InstantiationException | IllegalAccessException e) {
+            e.printStackTrace();
+            throw new InvalidSubjectInstantiationException();
+        }
     }
+
+    public abstract int getSubjectWeight();
+
+    public abstract String getSubjectType();
 
     public void addStudent(Student student) {
         students.addStudent(student);

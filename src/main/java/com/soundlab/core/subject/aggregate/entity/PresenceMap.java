@@ -10,7 +10,9 @@ import java.util.Map;
 import java.util.Set;
 
 import lombok.Getter;
+import lombok.ToString;
 
+@ToString
 public class PresenceMap {
     @Getter
     private final Map<LocalDate, Set<Student>> presenceMap = new HashMap<>();

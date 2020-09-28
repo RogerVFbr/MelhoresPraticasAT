@@ -5,6 +5,7 @@ import com.soundlab.core.user.aggregate.entity.User;
 import com.soundlab.core.user.aggregate.valueobject.BirthDate;
 import com.soundlab.core.user.aggregate.valueobject.CPF;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -14,7 +15,7 @@ public class Teacher extends User {
         super(id, name, cpf, birthDate);
     }
 
-    public static Teacher create(Long id, String name, String cpf, LocalDateTime birthDate) {
+    public static Teacher create(Long id, String name, String cpf, LocalDate birthDate) {
         CPF cpfObj = new CPF();
         cpfObj.setValue(cpf);
         BirthDate birthDateObj = new BirthDate();
@@ -22,7 +23,7 @@ public class Teacher extends User {
         return new Teacher(id, name, cpfObj, birthDateObj);
     }
 
-    public static Teacher create(Long id, String name, String cpf, LocalDateTime birthDate,
+    public static Teacher create(Long id, String name, String cpf, LocalDate birthDate,
                                  List<PhoneContact> phoneContacts) {
         CPF cpfObj = new CPF();
         cpfObj.setValue(cpf);
